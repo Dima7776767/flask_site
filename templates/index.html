@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section>
+    <h2>Текущее время: {{ current_time }}</h2>
+    
+    <button id="show-code" class="code-button">Показать код сервера</button>
+    <pre id="code-block" class="hidden"></pre>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("show-code").addEventListener("click", async () => {
+    const codeBlock = document.getElementById("code-block");
+    const button = document.getElementById("show-code");
+    
+    if (codeBlock.classList.contains("hidden")) {
+        try {
+            const response = await fetch("/show_code");
+            if (!response.ok) throw new Error("Ошибка загрузки");
+            const code = await response.text();
+            codeBlock.textContent = code;
+            codeBlock.classList.remove("hidden");
+            button.textContent = "Скрыть код";
+        } catch (error) {
+            codeBlock.textContent = "Ошибка: " + error.message;
+            codeBlock.classList.remove("hidden");
+        }
+    } else {
+        codeBlock.classList.add("hidden");
+        button.textContent = "Показать код сервера";
+    }
+});
+</script>
+{% endblock %}
